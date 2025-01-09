@@ -1,0 +1,59 @@
+# Python Bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.swp
+
+# Virtual Environment
+streamlit_env/
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Streamlit files
+*.streamlit/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# PyCharm and VS Code settings
+.idea/
+.vscode/
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Log files
+*.log
+
+# Test and coverage directories
+.coverage
+*.coveragerc
+nosetests.xml
+coverage.xml
+*.hypothesis/
+.cache/
+
+# Build directories
+build/
+dist/
+*.egg-info/
+
+# Configuration files
+*.config
+*.ini
+*.log
+*.sqlite
+*.db
+
+# Streamlit secrets file
+.secrets/
+
+# OS specific files
+.DS_Store
+Thumbs.db

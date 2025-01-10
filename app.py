@@ -1,10 +1,15 @@
 import streamlit as st
 import pickle
 import numpy as np
+from sklearn.preprocessing import StandardScaler  # Import scaler if needed
 
-# Load the trained model
+# Load the trained model and scaler
 with open("best_model.pkl", "rb") as f:
     model = pickle.load(f)
+
+# If you saved the scaler separately, load it as well
+with open("scaler.pkl", "rb") as f:
+    scaler = pickle.load(f)
 
 # Title
 st.title("Autism Prediction App")
@@ -35,7 +40,7 @@ ethnicity = ethnicity_dict.get(ethnicity, 0)  # Default to 0 if category not fou
 country_of_res = st.selectbox("Country of Residence", ["Country1", "Country2", "Country3"])  # Update with actual countries
 country_dict = {"Country1": 52, "Country2": 1, "Country3": 2}  # Update with actual mapping
 country_of_res = country_dict.get(country_of_res, 0)  # Default to 0
-result = st.selectbox("Result (Target Variable for Prediction)", [0, 15.112454	])
+result = st.selectbox("Result (Target Variable for Prediction)", [0, 15.112454])
 relation = st.selectbox("Relation", ["Parent", "Sibling", "Other"])  # Update with actual relations
 relation_dict = {"Parent": 4, "Sibling": 1, "Other": 2}  # Update with actual mapping
 relation = relation_dict.get(relation, 0)  # Default to 0
@@ -43,6 +48,7 @@ relation = relation_dict.get(relation, 0)  # Default to 0
 age_group = st.selectbox("Age Group", ["Group1", "Group2", "Group3"])  # Update with actual age groups
 age_group_dict = {"Group1": 4, "Group2": 2, "Group3": 2}  # Update with actual mapping
 age_group = age_group_dict.get(age_group, 0)  # Default to 0
+
 # Input features
 jaundice = st.selectbox("Jaundice (1 or 0)", [0, 1])  # Assuming binary input for jaundice
 
@@ -53,36 +59,15 @@ ind = st.number_input("Individual Score", min_value=0, max_value=100, value=50)
 # Predict
 if st.button("Predict"):
     # Create the features array with transformed inputs
-    features = np.array([[ a1_score, a2_score, a3_score, a4_score, a5_score, a6_score, a7_score, a8_score, a9_score, a10_score,
-                          age, gender, ethnicity, jaundice, country_of_res,result, relation, age_group, sum_score, ind]])
-    input_data = {
-            "Age": age,
-            "A1 Score": a1_score,
-            "A2 Score": a2_score,
-            "A3 Score": a3_score,
-            "A4 Score": a4_score,
-            "A5 Score": a5_score,
-            "A6 Score": a6_score,
-            "A7 Score": a7_score,
-            "A8 Score": a8_score,
-            "A9 Score": a9_score,
-            "A10 Score": a10_score,
-            "Gender": gender,
-            "Ethnicity": ethnicity,
-            "Jaundice": jaundice,
-            "Country of Residence": country_of_res,
-            "Result": result,
-            "Relation": relation,
-            "Age Group": age_group,
-            "Sum Score": sum_score,
-            "Individual Score": ind
-    }
-    
-    print("Input Data:", input_data)
+    features = np.array([[a1_score, a2_score, a3_score, a4_score, a5_score, a6_score, a7_score, a8_score, a9_score, a10_score,
+                          age, gender, ethnicity, jaundice, country_of_res, result, relation, age_group, sum_score, ind]])
+
+    # Scale the features using the saved scaler
+    features_scaled = scaler.transform(features)
+
     # Make the prediction
-    print (features)
-    prediction = model.predict(features)
-    print(prediction)
+    prediction = model.predict(features_scaled)
+
     # Display the result
     result = "Autistic" if prediction[0] == 1 else "Non-Autistic"
     st.subheader(f"Prediction: {result}")
